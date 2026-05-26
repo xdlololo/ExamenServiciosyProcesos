@@ -1,4 +1,4 @@
-# 🧠 Proyecto RAG — Programación de Servicios y Procesos
+#  Proyecto RAG — Programación de Servicios y Procesos
 
 Proyecto con 4 ejercicios sobre RAG (Retrieval Augmented Generation),
 ChromaDB, embeddings y CSS 3D.
@@ -9,14 +9,14 @@ ChromaDB, embeddings y CSS 3D.
 
 ```
 rag_proyecto/
-├── rag_basico.py              ← Ejercicio 1: RAG básico
-├── rag_ia.py                  ← Ejercicio 2: RAG + IA
+├── rag_basico.py              
+├── rag_ia.py                  
 ├── app_flask/
-│   ├── app.py                 ← Ejercicio 3: RAG empaquetado con Flask
+│   ├── app.py                 
 │   └── templates/
-│       └── index.html         ← Interfaz web
+│       └── index.html         
 ├── css3d/
-│   └── index.html             ← Ejercicio 4: CSS 3D interactivo
+│   └── index.html            
 ├── requirements.txt
 └── README.md
 ```
@@ -50,7 +50,7 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 
 ---
 
-## 🚀 Ejecución
+##  Ejecución
 
 ### Ejercicio 1 — RAG Básico
 ```bash
@@ -69,7 +69,6 @@ python rag_basico.py
 python rag_ia.py
 ```
 **Qué hace:**
-- Igual que el ejercicio 1, pero...
 - Pasa los chunks recuperados a Claude (Anthropic)
 - La IA genera una respuesta humana y comprensible
 - **Requiere:** `ANTHROPIC_API_KEY` configurada
@@ -107,7 +106,7 @@ css3d/index.html
 
 ---
 
-## 📚 Conceptos implementados
+##  Conceptos implementados
 
 | Concepto | Archivo |
 |---|---|
