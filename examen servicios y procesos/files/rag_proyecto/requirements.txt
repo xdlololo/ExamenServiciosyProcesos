@@ -1,0 +1,19 @@
+# ============================================================
+# DEPENDENCIAS DEL PROYECTO RAG
+# Instalar con:  pip install -r requirements.txt
+# ============================================================
+
+# Base de datos vectorial
+chromadb>=0.4.0
+
+# Embeddings (se instala automáticamente con chromadb)
+sentence-transformers>=2.2.0
+
+# Cliente Anthropic (para RAG + IA y Flask)
+anthropic>=0.25.0
+
+# Servidor web
+flask>=3.0.0
+
+# Lectura de PDFs (opcional, para el Flask)
+pdfplumber>=0.10.0

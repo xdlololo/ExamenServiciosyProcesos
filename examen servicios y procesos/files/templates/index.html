@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Studio — Entrena tu IA</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #111118;
+      --border:    #2a2a3a;
+      --accent:    #7c5cfc;
+      --accent2:   #00e5c3;
+      --text:      #e8e8f0;
+      --muted:     #6b6b80;
+      --danger:    #ff4d6d;
+      --success:   #00e5c3;
+      --chunk-bg:  #16161f;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Grid bg ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(124,92,252,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,252,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    header {
+      padding: 2.5rem 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: grid; place-items: center;
+      font-size: 1.2rem;
+    }
+
+    header h1 { font-size: 1.5rem; font-weight: 800; }
+    header h1 span { color: var(--accent2); }
+    header p  { font-size: .85rem; color: var(--muted); margin-top: .2rem; }
+
+    .badge {
+      margin-left: auto;
+      background: rgba(124,92,252,.15);
+      border: 1px solid rgba(124,92,252,.4);
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: .7rem;
+      padding: .3rem .7rem;
+      border-radius: 999px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      gap: 2rem;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.8rem;
+    }
+
+    .card-title {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: 1rem; font-weight: 700;
+      margin-bottom: 1.2rem;
+    }
+
+    .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center;
+      font-size: .75rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: .5rem; margin-bottom: 1rem; }
+
+    .tab {
+      padding: .45rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .tab.active {
+      background: rgba(124,92,252,.2);
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Inputs ── */
+    textarea, input[type=text] {
+      width: 100%;
+      background: #0d0d14;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: .85rem;
+      padding: .9rem 1rem;
+      resize: vertical;
+      transition: border-color .2s;
+      outline: none;
+    }
+
+    textarea:focus, input[type=text]:focus {
+      border-color: var(--accent);
+    }
+
+    textarea { min-height: 140px; }
+
+    .file-drop {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .file-drop:hover, .file-drop.over {
+      border-color: var(--accent);
+      background: rgba(124,92,252,.05);
+      color: var(--text);
+    }
+
+    .file-drop input { display: none; }
+    .file-drop .icon { font-size: 2rem; margin-bottom: .5rem; display: block; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.4rem;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #9b79ff);
+      color: #fff;
+    }
+
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      background: rgba(0,229,195,.1);
+      border: 1px solid rgba(0,229,195,.3);
+      color: var(--accent2);
+    }
+
+    .btn-secondary:hover { background: rgba(0,229,195,.2); }
+
+    /* ── Status ── */
+    .status-bar {
+      display: none;
+      align-items: center; gap: .6rem;
+      padding: .8rem 1rem;
+      border-radius: 10px;
+      font-size: .85rem;
+      margin-top: 1rem;
+    }
+
+    .status-bar.show { display: flex; }
+
+    .status-bar.loading {
+      background: rgba(124,92,252,.1);
+      border: 1px solid rgba(124,92,252,.3);
+      color: var(--accent);
+    }
+
+    .status-bar.success {
+      background: rgba(0,229,195,.08);
+      border: 1px solid rgba(0,229,195,.3);
+      color: var(--accent2);
+    }
+
+    .status-bar.error {
+      background: rgba(255,77,109,.08);
+      border: 1px solid rgba(255,77,109,.3);
+      color: var(--danger);
+    }
+
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Question panel ── */
+    #pregunta-panel { opacity: .4; pointer-events: none; transition: opacity .3s; }
+    #pregunta-panel.unlocked { opacity: 1; pointer-events: auto; }
+
+    .input-row { display: flex; gap: .8rem; }
+    .input-row input { flex: 1; }
+
+    /* ── Results ── */
+    #resultados { display: none; }
+    #resultados.show { display: block; }
+
+    .chunks-grid {
+      display: grid;
+      gap: .8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chunk-card {
+      background: var(--chunk-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: .8rem;
+      line-height: 1.6;
+      color: #b8b8cc;
+      position: relative;
+    }
+
+    .chunk-badge {
+      position: absolute; top: .7rem; right: .7rem;
+      background: rgba(0,229,195,.15);
+      border: 1px solid rgba(0,229,195,.3);
+      color: var(--accent2);
+      font-size: .7rem;
+      padding: .2rem .5rem;
+      border-radius: 999px;
+    }
+
+    .ia-response {
+      background: linear-gradient(135deg, rgba(124,92,252,.08), rgba(0,229,195,.05));
+      border: 1px solid rgba(124,92,252,.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      line-height: 1.7;
+      font-size: .95rem;
+    }
+
+    .ia-response .ia-label {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .8rem; color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      margin-bottom: .8rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 1.5rem 0;
+    }
+
+    .coleccion-id {
+      font-family: 'DM Mono', monospace;
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: .5rem;
+    }
+
+    .coleccion-id span { color: var(--accent2); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🧠</div>
+  <div>
+    <h1>RAG <span>Studio</span></h1>
+    <p>Entrena tu propio sistema RAG con cualquier documento</p>
+  </div>
+  <div class="badge">v1.0 · Flask + ChromaDB</div>
+</header>
+
+<main>
+
+  <!-- PASO 1: ENTRENAR -->
+  <div class="card">
+    <div class="card-title">
+      <div class="step-num">1</div>
+      Entrenar el RAG — sube tu documento
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('texto')">📝 Pegar texto</button>
+      <button class="tab" onclick="switchTab('archivo')">📁 Subir archivo</button>
+    </div>
+
+    <div id="tab-texto" class="tab-panel active">
+      <textarea id="input-texto" placeholder="Pega aquí tu texto (artículo, documentación, apuntes…)"></textarea>
+    </div>
+
+    <div id="tab-archivo" class="tab-panel">
+      <label class="file-drop" id="file-drop-label">
+        <span class="icon">📂</span>
+        <strong>Haz clic o arrastra un archivo aquí</strong><br/>
+        <small>Formatos: .txt, .pdf</small>
+        <input type="file" id="input-archivo" accept=".txt,.pdf" onchange="mostrarArchivo(this)" />
+      </label>
+      <p id="archivo-nombre" style="margin-top:.5rem; font-size:.85rem; color:var(--accent2);"></p>
+    </div>
+
+    <br/>
+    <button class="btn btn-primary" onclick="entrenar()">
+      ⚡ Entrenar RAG
+    </button>
+
+    <div class="status-bar" id="status-entrena"></div>
+    <p class="coleccion-id" id="coleccion-info" style="display:none">
+      Colección: <span id="coleccion-id-texto"></span>
+      &nbsp;·&nbsp; <span id="num-chunks-texto"></span> chunks indexados
+    </p>
+  </div>
+
+  <!-- PASO 2: PREGUNTAR -->
+  <div class="card" id="pregunta-panel">
+    <div class="card-title">
+      <div class="step-num">2</div>
+      Hacer una pregunta al RAG
+    </div>
+
+    <div class="input-row">
+      <input type="text" id="input-pregunta"
+             placeholder="¿Qué quieres saber sobre el documento?"
+             onkeydown="if(event.key==='Enter') preguntar()" />
+      <button class="btn btn-primary" onclick="preguntar()">Preguntar →</button>
+    </div>
+
+    <div class="status-bar" id="status-pregunta"></div>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div class="card" id="resultados">
+    <div class="card-title">
+      <div class="step-num">3</div>
+      Resultados
+    </div>
+
+    <p style="font-size:.85rem; color:var(--muted); margin-bottom:1rem;">
+      📄 Chunks recuperados por similitud semántica (crudos):
+    </p>
+    <div class="chunks-grid" id="chunks-container"></div>
+
+    <div class="divider"></div>
+
+    <div class="ia-response" id="ia-container">
+      <div class="ia-label">🤖 Respuesta generada por IA</div>
+      <div id="ia-texto"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  let coleccionActual = null;
+  let tabActual = 'texto';
+
+  function switchTab(tab) {
+    tabActual = tab;
+    document.querySelectorAll('.tab').forEach((t, i) =>
+      t.classList.toggle('active', ['texto','archivo'][i] === tab)
+    );
+    document.getElementById('tab-texto').classList.toggle('active', tab === 'texto');
+    document.getElementById('tab-archivo').classList.toggle('active', tab === 'archivo');
+  }
+
+  function mostrarArchivo(input) {
+    const nombre = input.files[0]?.name || '';
+    document.getElementById('archivo-nombre').textContent = nombre ? `📎 ${nombre}` : '';
+  }
+
+  function setStatus(id, tipo, msg) {
+    const el = document.getElementById(id);
+    el.className = `status-bar show ${tipo}`;
+    el.innerHTML = tipo === 'loading'
+      ? `<div class="spinner"></div> ${msg}`
+      : `<span>${tipo === 'success' ? '✅' : '❌'}</span> ${msg}`;
+  }
+
+  async function entrenar() {
+    const formData = new FormData();
+
+    if (tabActual === 'texto') {
+      const texto = document.getElementById('input-texto').value.trim();
+      if (!texto) { setStatus('status-entrena', 'error', 'Escribe o pega texto primero.'); return; }
+      formData.append('texto', texto);
+    } else {
+      const archivo = document.getElementById('input-archivo').files[0];
+      if (!archivo) { setStatus('status-entrena', 'error', 'Selecciona un archivo primero.'); return; }
+      formData.append('archivo', archivo);
+    }
+
+    setStatus('status-entrena', 'loading', 'Procesando documento y creando embeddings…');
+
+    try {
+      const res = await fetch('/entrenar', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (data.error) { setStatus('status-entrena', 'error', data.error); return; }
+
+      coleccionActual = data.coleccion_id;
+      setStatus('status-entrena', 'success', `RAG entrenado correctamente.`);
+
+      document.getElementById('coleccion-info').style.display = 'block';
+      document.getElementById('coleccion-id-texto').textContent = data.coleccion_id;
+      document.getElementById('num-chunks-texto').textContent = data.num_chunks;
+
+      document.getElementById('pregunta-panel').classList.add('unlocked');
+
+    } catch (e) {
+      setStatus('status-entrena', 'error', 'Error de red: ' + e.message);
+    }
+  }
+
+  async function preguntar() {
+    const pregunta = document.getElementById('input-pregunta').value.trim();
+    if (!pregunta) { setStatus('status-pregunta', 'error', 'Escribe una pregunta.'); return; }
+    if (!coleccionActual) { setStatus('status-pregunta', 'error', 'Primero entrena el RAG.'); return; }
+
+    setStatus('status-pregunta', 'loading', 'Buscando chunks relevantes y generando respuesta…');
+    document.getElementById('resultados').classList.remove('show');
+
+    try {
+      const res = await fetch('/preguntar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pregunta, coleccion_id: coleccionActual })
+      });
+      const data = await res.json();
+
+      if (data.error) { setStatus('status-pregunta', 'error', data.error); return; }
+
+      setStatus('status-pregunta', 'success', `${data.chunks.length} chunks recuperados.`);
+
+      // Mostrar chunks
+      const container = document.getElementById('chunks-container');
+      container.innerHTML = data.chunks.map((c, i) => `
+        <div class="chunk-card">
+          <div class="chunk-badge">${c.similitud}% similitud</div>
+          ${c.texto}
+        </div>
+      `).join('');
+
+      // Mostrar respuesta IA
+      document.getElementById('ia-texto').textContent = data.respuesta_ia;
+      document.getElementById('resultados').classList.add('show');
+
+    } catch (e) {
+      setStatus('status-pregunta', 'error', 'Error de red: ' + e.message);
+    }
+  }
+
+  // Drag & drop
+  const dropLabel = document.getElementById('file-drop-label');
+  dropLabel.addEventListener('dragover', e => { e.preventDefault(); dropLabel.classList.add('over'); });
+  dropLabel.addEventListener('dragleave', () => dropLabel.classList.remove('over'));
+  dropLabel.addEventListener('drop', e => {
+    e.preventDefault(); dropLabel.classList.remove('over');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      document.getElementById('input-archivo').files = e.dataTransfer.files;
+      mostrarArchivo(document.getElementById('input-archivo'));
+    }
+  });
+</script>
+</body>
+</html>

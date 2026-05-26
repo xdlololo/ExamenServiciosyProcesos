@@ -1,0 +1,31 @@
+Historia de los Videojuegos
+
+Los videojuegos nacieron en los años 50 como experimentos académicos. El primer videojuego considerado como tal fue Tennis for Two, creado en 1958 por el físico William Higinbotham en el Brookhaven National Laboratory usando un osciloscopio. Sin embargo, fue Spacewar! en 1962, desarrollado en el MIT, el primer juego ampliamente distribuido entre universidades.
+
+La era de las máquinas recreativas comenzó en 1971 con Computer Space, el primer videojuego arcade comercial. Pero fue Pong, lanzado por Atari en 1972, el que verdaderamente popularizó los videojuegos. Pong era un simulador de tenis de mesa extremadamente simple: dos barras y una pelota. Aun así, se convirtió en un fenómeno cultural y generó millones de dólares.
+
+Atari dominó los años 70. En 1977 lanzó la Atari 2600, una de las primeras consolas domésticas con cartuchos intercambiables. Esto cambió todo: ya no hacía falta comprar una máquina nueva para jugar a otro juego. La consola llegó a los hogares y los videojuegos dejaron de ser solo cosa de salones recreativos.
+
+El crash de los videojuegos de 1983 fue una crisis brutal. El mercado estadounidense colapsó: las ventas cayeron de 3.200 millones de dólares en 1983 a apenas 100 millones en 1985. Las causas fueron la saturación del mercado con juegos de baja calidad, la competencia de los ordenadores personales y el fracaso estrepitoso del port de E.T. para Atari 2600, considerado el peor videojuego de la historia.
+
+Nintendo salvó la industria. En 1985 lanzó la Nintendo Entertainment System (NES) en Estados Unidos, con Super Mario Bros como juego estrella. Nintendo impuso un sistema de licencias estricto para evitar que cualquier desarrollador publicase basura en su consola. La calidad volvió al mercado y los videojuegos resurgieron más fuertes que nunca.
+
+La guerra de consolas de los 90 enfrentó a Sega y Nintendo. La Mega Drive de Sega popularizó el eslogan "Genesis does what Nintendon't" atacando directamente a la Super Nintendo. Sonic the Hedgehog, el erizo azul veloz, fue la respuesta de Sega a Mario. La rivalidad fue feroz y apasionante para los jugadores de la época.
+
+Sony entró en el mercado en 1994 con la PlayStation. Originalmente Sony y Nintendo iban a colaborar para crear un reproductor de CD-ROM para la Super Nintendo, pero el acuerdo fracasó. Sony decidió lanzar su propia consola y cambió la industria para siempre. La PlayStation usaba CDs en lugar de cartuchos, lo que abarató los costes de producción y permitió juegos mucho más grandes.
+
+La era tridimensional llegó con la Nintendo 64 y la PlayStation. Super Mario 64 en 1996 redefinió lo que podía ser un videojuego: un mundo tridimensional enorme, explorable libremente. Final Fantasy VII en 1997 demostró que los videojuegos podían contar historias épicas con personajes complejos y cinemáticas impactantes.
+
+Los ordenadores personales también tuvieron su edad de oro en los 90. Doom en 1993 popularizó los shooters en primera persona y el concepto de shareware. StarCraft en 1998 se convirtió en deporte nacional en Corea del Sur. Half-Life en 1998 revolucionó la narrativa en videojuegos. Quake introdujo el juego online multijugador masivo.
+
+Los años 2000 trajeron los juegos online masivos. World of Warcraft, lanzado en 2004 por Blizzard, llegó a tener 12 millones de suscriptores de pago simultáneos. EverQuest y Ultima Online habían abierto el camino, pero WoW lo conquistó todo. La gente pagaba una cuota mensual para vivir en un mundo virtual persistente.
+
+Los juegos móviles explotaron con el iPhone en 2007. App Store abrió en 2008 y Angry Birds en 2009 se convirtió en el primer fenómeno global de los videojuegos móviles. Candy Crush Saga en 2012 llevó los juegos de puzzle a las abuelas y a los ejecutivos en el metro. Los videojuegos dejaron de ser cosa de frikis para convertirse en entretenimiento universal.
+
+Los esports se profesionalizaron en los años 2010. League of Legends, Dota 2, Counter-Strike y más tarde Fortnite llenaron estadios. El campeonato mundial de League of Legends de 2019 fue visto por 100 millones de personas, superando a muchas finales deportivas tradicionales. Los jugadores profesionales ganan millones y tienen contratos con equipos patrocinados por marcas como Red Bull, Samsung y BMW.
+
+La realidad virtual prometió revolucionar los videojuegos. Oculus Rift y HTC Vive llegaron al mercado en 2016. PlayStation VR hizo la tecnología más accesible. Sin embargo, la adopción masiva no llegó: los cascos eran caros, incómodos y producían mareo. Meta (Facebook) invirtió miles de millones en el metaverso virtual con resultados decepcionantes.
+
+El streaming de videojuegos cambió la cultura gamer. Twitch, lanzado en 2011, permitió a cualquiera retransmitir sus partidas en directo. PewDiePie en YouTube y Ninja en Twitch se convirtieron en estrellas multimillonarias jugando videojuegos. La gente disfruta viendo jugar a otros casi tanto como jugando ellos mismos.
+
+La inteligencia artificial está transformando el desarrollo de videojuegos. Los NPCs ya no siguen scripts fijos sino que reaccionan dinámicamente. Los motores de juego usan IA para generar texturas, niveles y diálogos proceduralmente. En 2023, juegos como AI Dungeon permitieron historias generadas completamente por modelos de lenguaje. El futuro de los videojuegos y la IA están profundamente entrelazados.

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS 3D — RAG Universe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    /* ─────────────────────────────────────────────
+       RESET & BASE
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #7c5cfc;
+      --cyan:   #00e5c3;
+      --pink:   #ff4d9b;
+      --yellow: #ffd24d;
+      --bg:     #04040a;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      cursor: grab;
+      user-select: none;
+    }
+
+    body:active { cursor: grabbing; }
+
+    /* ─────────────────────────────────────────────
+       STARFIELD BACKGROUND
+    ───────────────────────────────────────────── */
+    .stars {
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(124,92,252,.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(0,229,195,.1) 0%, transparent 50%),
+        var(--bg);
+    }
+
+    .stars::before, .stars::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 15% 75%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(2px 2px at 60% 55%, rgba(124,92,252,.8) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 25% 85%, rgba(0,229,195,.6) 0%, transparent 100%);
+    }
+
+    /* ─────────────────────────────────────────────
+       PERSPECTIVE SCENE
+    ───────────────────────────────────────────── */
+    .scene-wrapper {
+      position: fixed; inset: 0;
+      perspective: 900px;
+      perspective-origin: 50% 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scene {
+      position: relative;
+      transform-style: preserve-3d;
+      width: 400px; height: 400px;
+      animation: autoRotate 30s linear infinite;
+      transition: animation-duration .3s;
+    }
+
+    .scene:hover { animation-duration: 80s; }
+
+    @keyframes autoRotate {
+      from { transform: rotateX(-15deg) rotateY(0deg); }
+      to   { transform: rotateX(-15deg) rotateY(360deg); }
+    }
+
+    /* ─────────────────────────────────────────────
+       CENTRAL CUBE — "KNOWLEDGE BASE"
+    ───────────────────────────────────────────── */
+    .cube {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px; height: 120px;
+      transform-style: preserve-3d;
+      animation: cubeFloat 4s ease-in-out infinite alternate,
+                 cubeGlow  3s ease-in-out infinite alternate;
+    }
+
+    @keyframes cubeFloat {
+      from { transform: translate(-50%,-50%) translateY(-10px); }
+      to   { transform: translate(-50%,-50%) translateY(10px); }
+    }
+
+    @keyframes cubeGlow {
+      from { filter: drop-shadow(0 0 15px rgba(124,92,252,.6)); }
+      to   { filter: drop-shadow(0 0 35px rgba(0,229,195,.8)); }
+    }
+
+    .cube .face {
+      position: absolute;
+      width: 120px; height: 120px;
+      border: 1.5px solid rgba(124,92,252,.5);
+      background: rgba(10,5,30,.7);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      font-weight: 700;
+      color: rgba(124,92,252,.9);
+      letter-spacing: .05em;
+    }
+
+    .face.front  { transform: translateZ(60px);  background: rgba(124,92,252,.12); }
+    .face.back   { transform: rotateY(180deg) translateZ(60px); }
+    .face.left   { transform: rotateY(-90deg) translateZ(60px); }
+    .face.right  { transform: rotateY(90deg) translateZ(60px); }
+    .face.top    { transform: rotateX(90deg) translateZ(60px);
+                   color: rgba(0,229,195,.9); border-color: rgba(0,229,195,.5); }
+    .face.bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+    /* ─────────────────────────────────────────────
+       ORBITING NODES
+    ───────────────────────────────────────────── */
+    .orbit {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform-style: preserve-3d;
+      transform: translate(-50%,-50%);
+    }
+
+    /* Orbit ring 1 — horizontal */
+    .orbit-ring-1 {
+      animation: orbit1 8s linear infinite;
+    }
+    @keyframes orbit1 {
+      from { transform: translate(-50%,-50%) rotateX(70deg) rotateZ(0deg); }
+      to   { transform: translate(-50%,-50%) rotateX(70deg) rotateZ(360deg); }
+    }
+
+    /* Orbit ring 2 — tilted */
+    .orbit-ring-2 {
+      animation: orbit2 12s linear infinite reverse;
+    }
+    @keyframes orbit2 {
+      from { transform: translate(-50%,-50%) rotateX(40deg) rotateY(20deg) rotateZ(0deg); }
+      to   { transform: translate(-50%,-50%) rotateX(40deg) rotateY(20deg) rotateZ(360deg); }
+    }
+
+    /* Orbit ring 3 — vertical */
+    .orbit-ring-3 {
+      animation: orbit3 16s linear infinite;
+    }
+    @keyframes orbit3 {
+      from { transform: translate(-50%,-50%) rotateY(90deg) rotateZ(0deg); }
+      to   { transform: translate(-50%,-50%) rotateY(90deg) rotateZ(360deg); }
+    }
+
+    .node {
+      position: absolute;
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: .2rem;
+      font-size: .55rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-align: center;
+      border: 1.5px solid currentColor;
+      background: var(--bg);
+      animation: nodePulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes nodePulse {
+      from { transform: scale(.95); }
+      to   { transform: scale(1.05); box-shadow: 0 0 20px currentColor; }
+    }
+
+    .node .icon { font-size: 1.4rem; }
+
+    /* Node positions on each orbit ring (radius ~180px) */
+    .orbit-ring-1 .node:nth-child(1) { transform: translateX(180px); color: var(--cyan); }
+    .orbit-ring-1 .node:nth-child(2) { transform: translateX(-180px); color: var(--purple); }
+    .orbit-ring-2 .node:nth-child(1) { transform: translateX(160px); color: var(--pink); }
+    .orbit-ring-2 .node:nth-child(2) { transform: translateX(-160px); color: var(--yellow); }
+    .orbit-ring-3 .node:nth-child(1) { transform: translateX(170px); color: var(--cyan); }
+    .orbit-ring-3 .node:nth-child(2) { transform: translateX(-170px); color: var(--purple); }
+
+    /* ─────────────────────────────────────────────
+       CONNECTION LINES (CSS only – pseudo-elements)
+    ───────────────────────────────────────────── */
+    .connector {
+      position: absolute;
+      top: 50%; left: 50%;
+      height: 1px;
+      transform-origin: left center;
+      background: linear-gradient(90deg, rgba(124,92,252,.6), transparent);
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+
+    /* ─────────────────────────────────────────────
+       FLOATING PARTICLES
+    ───────────────────────────────────────────── */
+    .particles { position: fixed; inset: 0; pointer-events: none; }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: particleDrift linear infinite;
+    }
+
+    @keyframes particleDrift {
+      0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { transform: translateY(-20px) rotate(720deg); opacity: 0; }
+    }
+
+    /* ─────────────────────────────────────────────
+       DATA STREAMS
+    ───────────────────────────────────────────── */
+    .streams { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+
+    .stream {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, var(--cyan), transparent);
+      animation: streamFall linear infinite;
+      opacity: .4;
+    }
+
+    @keyframes streamFall {
+      from { transform: translateY(-100%); }
+      to   { transform: translateY(100vh); }
+    }
+
+    /* ─────────────────────────────────────────────
+       HUD OVERLAY
+    ───────────────────────────────────────────── */
+    .hud {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .hud-corner {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .7rem;
+      color: rgba(0,229,195,.6);
+      line-height: 1.8;
+    }
+
+    .hud-tl { top: 1.5rem; left: 1.5rem; }
+    .hud-tr { top: 1.5rem; right: 1.5rem; text-align: right; }
+    .hud-bl { bottom: 1.5rem; left: 1.5rem; }
+    .hud-br { bottom: 1.5rem; right: 1.5rem; text-align: right; }
+
+    .hud-label { color: rgba(124,92,252,.8); }
+    .hud-value { color: rgba(0,229,195,.9); }
+
+    /* blinking cursor */
+    .blink { animation: blink .8s step-start infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ─────────────────────────────────────────────
+       TITLE
+    ───────────────────────────────────────────── */
+    .title-banner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(calc(-50% - 230px));
+      text-align: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .title-banner h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .title-banner p {
+      font-size: .75rem;
+      color: rgba(255,255,255,.35);
+      letter-spacing: .15em;
+      margin-top: .3rem;
+    }
+
+    /* ─────────────────────────────────────────────
+       BOTTOM LEGEND
+    ───────────────────────────────────────────── */
+    .legend {
+      position: fixed;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 2rem;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .legend-item {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .65rem;
+      color: rgba(255,255,255,.4);
+    }
+
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ─────────────────────────────────────────────
+       MOUSE DRAG CONTROL (JS-driven)
+    ───────────────────────────────────────────── */
+    /* applied via JS */
+  </style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div class="stars"></div>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- DATA STREAMS -->
+<div class="streams" id="streams"></div>
+
+<!-- TITLE -->
+<div class="title-banner">
+  <h1>RAG Universe</h1>
+  <p>RETRIEVAL · EMBEDDINGS · GENERATION · KNOWLEDGE</p>
+</div>
+
+<!-- 3D SCENE -->
+<div class="scene-wrapper">
+  <div class="scene" id="scene">
+
+    <!-- CENTRAL CUBE -->
+    <div class="cube">
+      <div class="face front">CHROMA<br/>DB</div>
+      <div class="face back">VECTOR<br/>STORE</div>
+      <div class="face left">EMBED<br/>DINGS</div>
+      <div class="face right">INDEX</div>
+      <div class="face top">RAG<br/>CORE</div>
+      <div class="face bottom">DATA</div>
+    </div>
+
+    <!-- ORBIT RING 1 — DOCUMENTS & QUERIES -->
+    <div class="orbit orbit-ring-1">
+      <div class="node">
+        <span class="icon"></span>
+        <span>DOCS</span>
+      </div>
+      <div class="node">
+        <span class="icon"></span>
+        <span>QUERY</span>
+      </div>
+    </div>
+
+    <!-- ORBIT RING 2 — MODEL & OUTPUT -->
+    <div class="orbit orbit-ring-2">
+      <div class="node">
+        <span class="icon"></span>
+        <span>LLM</span>
+      </div>
+      <div class="node">
+        <span class="icon"></span>
+        <span>OUTPUT</span>
+      </div>
+    </div>
+
+    <!-- ORBIT RING 3 — CHUNKS & SIMILARITY -->
+    <div class="orbit orbit-ring-3">
+      <div class="node">
+        <span class="icon"></span>
+        <span>CHUNKS</span>
+      </div>
+      <div class="node">
+        <span class="icon"></span>
+        <span>COSINE</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- HUD OVERLAY -->
+<div class="hud">
+  <div class="hud-corner hud-tl">
+    <div><span class="hud-label">SYSTEM  </span><span class="hud-value">RAG_UNIVERSE v1.0</span></div>
+    <div><span class="hud-label">STATUS  </span><span class="hud-value">ONLINE <span class="blink">▮</span></span></div>
+    <div><span class="hud-label">ENGINE  </span><span class="hud-value">ChromaDB</span></div>
+  </div>
+  <div class="hud-corner hud-tr">
+    <div><span class="hud-label">CHUNKS    </span><span class="hud-value" id="hud-chunks">0000</span></div>
+    <div><span class="hud-label">QUERIES   </span><span class="hud-value" id="hud-queries">0000</span></div>
+    <div><span class="hud-label">SIMILARITY</span><span class="hud-value" id="hud-sim">0.000</span></div>
+  </div>
+  <div class="hud-corner hud-bl">
+    <div>🖱 DRAG to rotate</div>
+    <div>⚡ CSS 3D · transform-style: preserve-3d</div>
+  </div>
+  <div class="hud-corner hud-br">
+    <div id="hud-time"></div>
+    <div><span class="hud-value">RAG</span> · EMBED · QUERY · GENERATE</div>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#00e5c3"></div>Documents / Query</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff4d9b"></div>LLM / Output</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c5cfc"></div>Chunks / Similarity</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c5cfc; border-radius:2px"></div>ChromaDB Core</div>
+</div>
+
+<script>
+  // ── PARTICLES ─────────────────────────────────────
+  const particlesContainer = document.getElementById('particles');
+  const colors = ['#7c5cfc','#00e5c3','#ff4d9b','#ffd24d'];
+
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 2;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `
+      width: ${size}px; height: ${size}px;
+      left: ${Math.random() * 100}%;
+      background: ${color};
+      animation-duration: ${Math.random() * 15 + 10}s;
+      animation-delay: ${Math.random() * 15}s;
+      opacity: ${Math.random() * .5 + .2};
+    `;
+    particlesContainer.appendChild(p);
+  }
+
+  // ── DATA STREAMS ──────────────────────────────────
+  const streamsContainer = document.getElementById('streams');
+  for (let i = 0; i < 8; i++) {
+    const s = document.createElement('div');
+    s.className = 'stream';
+    const streamColors = ['#00e5c3','#7c5cfc','#ff4d9b'];
+    s.style.cssText = `
+      left: ${Math.random() * 100}%;
+      height: ${Math.random() * 200 + 100}px;
+      background: linear-gradient(180deg, transparent, ${streamColors[i % 3]}, transparent);
+      animation-duration: ${Math.random() * 4 + 3}s;
+      animation-delay: ${Math.random() * 5}s;
+    `;
+    streamsContainer.appendChild(s);
+  }
+
+  // ── HUD CLOCK ─────────────────────────────────────
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('hud-time').textContent =
+      now.toTimeString().slice(0,8);
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ── HUD COUNTERS (animated) ───────────────────────
+  let chunks = 0, queries = 0, sim = 0;
+  setInterval(() => {
+    chunks = (chunks + Math.floor(Math.random() * 5)) % 9999;
+    queries = (queries + 1) % 9999;
+    sim = (Math.random()).toFixed(3);
+    document.getElementById('hud-chunks').textContent = String(chunks).padStart(4,'0');
+    document.getElementById('hud-queries').textContent = String(queries).padStart(4,'0');
+    document.getElementById('hud-sim').textContent = sim;
+  }, 800);
+
+  // ── MOUSE DRAG ROTATION ───────────────────────────
+  const scene = document.getElementById('scene');
+  let dragging = false, lastX = 0, lastY = 0;
+  let rotX = -15, rotY = 0;
+
+  scene.addEventListener('mousedown', e => {
+    dragging = true;
+    lastX = e.clientX; lastY = e.clientY;
+    scene.style.animationPlayState = 'paused';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    rotY += dx * .5;
+    rotX -= dy * .5;
+    rotX = Math.max(-80, Math.min(80, rotX));
+    scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    lastX = e.clientX; lastY = e.clientY;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (dragging) {
+      dragging = false;
+      // Resume auto-rotation from current position
+      scene.style.animation = 'none';
+    }
+  });
+
+  // Touch support
+  scene.addEventListener('touchstart', e => {
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+    scene.style.animationPlayState = 'paused';
+  });
+
+  scene.addEventListener('touchmove', e => {
+    const dx = e.touches[0].clientX - lastX;
+    const dy = e.touches[0].clientY - lastY;
+    rotY += dx * .5;
+    rotX -= dy * .5;
+    rotX = Math.max(-80, Math.min(80, rotX));
+    scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+  });
+</script>
+</body>
+</html>
