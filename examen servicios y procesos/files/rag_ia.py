@@ -1,18 +1,9 @@
-# ============================================================
-# EJERCICIO 2: RAG + IA
-# - Recupera chunks relevantes (igual que rag_basico.py)
-# - Pasa esos chunks a un modelo de IA (Anthropic Claude)
-# - La IA genera una respuesta humana y comprensible
-# ============================================================
-
 import os
 import chromadb
 from chromadb.utils import embedding_functions
 import anthropic
 
-# ── Configuración ─────────────────────────────────────────────────────────────
-# Pon aquí tu API key de Anthropic, o mejor aún, usa una variable de entorno:
-#   export ANTHROPIC_API_KEY="sk-ant-..."
+
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "TU_API_KEY_AQUI")
 
 TEXTO_LARGO = """
