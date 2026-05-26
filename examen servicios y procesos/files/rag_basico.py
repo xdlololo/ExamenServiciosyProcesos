@@ -1,15 +1,7 @@
-# ============================================================
-# EJERCICIO 1: RAG BÁSICO
-# - Genera embeddings de bloques de texto (chunks)
-# - Los mete en ChromaDB (base de datos vectorial)
-# - Realiza queries y devuelve los chunks más similares
-# ============================================================
-
 import chromadb
 from chromadb.utils import embedding_functions
 import textwrap
 
-# ── Texto de ejemplo (puedes cambiarlo por cualquier documento) ──────────────
 TEXTO_LARGO = """
 La inteligencia artificial (IA) es la simulación de procesos de inteligencia humana
 por parte de máquinas, especialmente sistemas informáticos. Sus aplicaciones incluyen
@@ -64,9 +56,9 @@ def dividir_en_chunks(texto: str, tamanio: int = 200, solapamiento: int = 50) ->
         fin = inicio + tamanio
         chunk = " ".join(palabras[inicio:fin])
         chunks.append(chunk.strip())
-        inicio += tamanio - solapamiento  # avanzar con solapamiento
+        inicio += tamanio - solapamiento  
 
-    return [c for c in chunks if len(c) > 30]  # filtrar chunks muy pequeños
+    return [c for c in chunks if len(c) > 30]  
 
 
 def crear_base_de_datos(chunks: list[str]) -> chromadb.Collection:
