@@ -1,18 +1,9 @@
-# ============================================================
-# EJERCICIO 2: RAG + IA
-# - Recupera chunks relevantes (igual que rag_basico.py)
-# - Pasa esos chunks a un modelo de IA (Anthropic Claude)
-# - La IA genera una respuesta humana y comprensible
-# ============================================================
-
 import os
 import chromadb
 from chromadb.utils import embedding_functions
 import anthropic
 
-# ── Configuración ─────────────────────────────────────────────────────────────
-# Pon aquí tu API key de Anthropic, o mejor aún, usa una variable de entorno:
-#   export ANTHROPIC_API_KEY="sk-ant-..."
+
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "TU_API_KEY_AQUI")
 
 TEXTO_LARGO = """
@@ -81,7 +72,7 @@ def obtener_coleccion() -> chromadb.Collection:
         print("✅ Colección cargada desde disco.")
     except Exception:
         # Si no existe, crearla
-        print("📦 Creando nueva colección...")
+        print(" Creando nueva colección...")
         try:
             cliente.delete_collection("mi_coleccion_rag")
         except Exception:
@@ -149,15 +140,15 @@ def rag_con_ia(pregunta: str, n_chunks: int = 3):
     coleccion = obtener_coleccion()
     chunks = recuperar_chunks(coleccion, pregunta, n=n_chunks)
 
-    print(f"\n📄 Chunks crudos recuperados ({len(chunks)}):")
+    print(f"\n Chunks crudos recuperados ({len(chunks)}):")
     for i, chunk in enumerate(chunks):
         print(f"  [{i+1}] {chunk[:120]}...")
 
     # Paso 2: Pasar chunks a la IA
-    print("\n🤖 Generando respuesta con IA...\n")
+    print("\n Generando respuesta con IA...\n")
     respuesta = generar_respuesta_ia(pregunta, chunks)
 
-    print("💬 Respuesta generada por IA:")
+    print(" Respuesta generada por IA:")
     print("-" * 60)
     print(respuesta)
     print("-" * 60)
@@ -168,11 +159,11 @@ def rag_con_ia(pregunta: str, n_chunks: int = 3):
 # ── Ejecución principal ───────────────────────────────────────────────────────
 if __name__ == "__main__":
     print("=" * 60)
-    print("     🧠 RAG + IA - Chunks → Respuesta Humanizada")
+    print("      RAG + IA - Chunks → Respuesta Humanizada")
     print("=" * 60)
 
     if ANTHROPIC_API_KEY == "TU_API_KEY_AQUI":
-        print("\n⚠️  AVISO: No has configurado tu ANTHROPIC_API_KEY.")
+        print("\n  AVISO: No has configurado tu ANTHROPIC_API_KEY.")
         print("   Ejecuta: export ANTHROPIC_API_KEY='sk-ant-...'")
         print("   O edita la variable ANTHROPIC_API_KEY en este archivo.\n")
     else:
